@@ -2,15 +2,19 @@
   <head>
     <title>Hello Manuel</title>
     <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
+
+    <link rel="stylesheet" href="spectre.min.css">
+    <link rel="stylesheet" href="spectre-exp.min.css">
+    <link rel="stylesheet" href="spectre-icons.min.css">
   </head>
   <body>
 		<div id="results">Your captured image will appear here...</div>
-	
+
 	<h1>WebcamJS Test Page</h1>
 	<h3>Demonstrates simple 320x240 capture &amp; display</h3>
-	
+
 	<div id="my_camera"></div>
-	
+
 	<!-- Configure a few settings and attach camera -->
 	<script language="JavaScript">
 		Webcam.set({
@@ -21,30 +25,43 @@
 		});
 		Webcam.attach( '#my_camera' );
 	</script>
-	
-	<!-- A button for taking snaps -->
+
+	<!-- Buttons for taking snaps -->
 	<form>
 		<input type=button value="Take Snapshot" onClick="take_snapshot()">
 	</form>
-	
+
+  <form>
+		<input type=button value="Take Snapshot in loop" onClick="take_snapshot_loop()">
+	</form>
+
+  <script>
+  function take_snapshot_loop() {
+      setInterval(take_snapshot, 3000);
+      setInterval(take_snapshot, 3250);
+      setInterval(take_snapshot, 3500);
+      setInterval(take_snapshot, 3750);
+  }
+  </script>
+
 	<!-- Code to handle taking the snapshot and displaying it locally -->
 	<script language="JavaScript">
 		function take_snapshot() {
+      // alert("Take Snapshot")
 			// take snapshot and get image data
 			Webcam.snap( function(data_uri) {
 				// display results in page
-				document.getElementById('results').innerHTML = 
-					'<h2>Here is your image:</h2>' + 
-					'<img src="'+data_uri+'"/>';
+				/*document.getElementById('results').innerHTML =
+					'<h2>Here is your image:</h2>' +
+					'<img src="'+data_uri+'"/>';*/
         Webcam.upload( data_uri, "{{ url_for('upload_photo') }}", function(code, text) {
 			    // Upload complete!
 			    // 'code' will be the HTTP response code from the server, e.g. 200
 			    // 'text' will be the raw response content
-          console.log(text);
+          //console.log(text);
 		    });
 			});
 		}
 	</script>
   </body>
 </html>
-
