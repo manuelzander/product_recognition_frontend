@@ -32,35 +32,52 @@
 	</form>
 
   <form>
-		<input type=button value="Take Snapshot in loop" onClick="take_snapshot_loop()">
+		<input type=button value="Take Snapshots in loop" onClick="take_snapshot_loop()">
 	</form>
 
-  <script>
-  function take_snapshot_loop() {
-      setInterval(take_snapshot, 3000);
-      setInterval(take_snapshot, 3250);
-      setInterval(take_snapshot, 3500);
-      setInterval(take_snapshot, 3750);
-  }
-  </script>
+  <form>
+    <input type=button value="Stop to take Snapshots in loop" onClick="stop_taking_snapshot()">
+  </form>
 
-	<!-- Code to handle taking the snapshot and displaying it locally -->
-	<script language="JavaScript">
-		function take_snapshot() {
-      // alert("Take Snapshot")
-			// take snapshot and get image data
-			Webcam.snap( function(data_uri) {
-				// display results in page
-				/*document.getElementById('results').innerHTML =
-					'<h2>Here is your image:</h2>' +
-					'<img src="'+data_uri+'"/>';*/
-        Webcam.upload( data_uri, "{{ url_for('upload_photo') }}", function(code, text) {
-			    // Upload complete!
-			    // 'code' will be the HTTP response code from the server, e.g. 200
-			    // 'text' will be the raw response content
-          //console.log(text);
-		    });
-			});
+
+  <script>
+
+  var intervals = [0,0,0,0];
+
+  function take_snapshot_loop() {
+
+      var i1 = setInterval(take_snapshot, 5000);
+      var i2 = setInterval(take_snapshot, 5250);
+      var i3 = setInterval(take_snapshot, 5500);
+      var i4 = setInterval(take_snapshot, 5750);
+
+      intervals = [i1, i2, i3, i4];
+
+      return intervals;
+  }
+
+  function stop_taking_snapshot() {
+      clearInterval(intervals[0]);
+      clearInterval(intervals[1]);
+      clearInterval(intervals[2]);
+      clearInterval(intervals[3]);
+  }
+
+	function take_snapshot() {
+    // alert("Take Snapshot")
+		// take snapshot and get image data
+		Webcam.snap( function(data_uri) {
+			// display results in page
+			/*document.getElementById('results').innerHTML =
+				'<h2>Here is your image:</h2>' +
+				'<img src="'+data_uri+'"/>';*/
+      Webcam.upload( data_uri, "{{ url_for('upload_photo') }}", function(code, text) {
+		    // Upload complete!
+		    // 'code' will be the HTTP response code from the server, e.g. 200
+		    // 'text' will be the raw response content
+        //console.log(text);
+	    });
+		});
 		}
 	</script>
   </body>
