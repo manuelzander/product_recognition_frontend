@@ -57,10 +57,10 @@
   }
 
   function stop_taking_snapshot() {
-      clearInterval(intervals[0]);
-      clearInterval(intervals[1]);
-      clearInterval(intervals[2]);
-      clearInterval(intervals[3]);
+    var num_snapshots = 4;
+    for (var i = 0; i < num_snapshots; i++) {
+      clearInterval(intervals[i]);
+    }
   }
 
 	function take_snapshot() {
