@@ -3,9 +3,9 @@
     <title>Hello Manuel</title>
     <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
 
-    <link rel="stylesheet" href="spectre.min.css">
-    <link rel="stylesheet" href="spectre-exp.min.css">
-    <link rel="stylesheet" href="spectre-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='spectre-0.5.0/dist/spectre.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='spectre-0.5.0/dist/spectre-exp.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='spectre-0.5.0/dist/spectre-icons.min.css') }}">
   </head>
   <body>
 		<div id="results">Your captured image will appear here...</div>
