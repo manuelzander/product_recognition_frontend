@@ -83,31 +83,31 @@
 
   		Webcam.attach( '#my_camera' );
 
-      var intervals = [0,0,0,0];
+      //var intervals = [0,0,0,0];
 
       function take_snapshot_loop() {
 
-          var i1 = setInterval(take_snapshot, 5000);
-          var i2 = setInterval(take_snapshot, 5250);
-          var i3 = setInterval(take_snapshot, 5500);
-          var i4 = setInterval(take_snapshot, 5750);
+          //Take a picture every 1000 ms (1 second)
+          var interval = setInterval(take_snapshot, 1000);
+          //intervals = [i1, i2, i3, i4];
 
-          intervals = [i1, i2, i3, i4];
-
-          return intervals;
+          return interval;
       }
 
       function stop_taking_snapshot() {
-        var num_snapshots = 4;
-        for (var i = 0; i < num_snapshots; i++) {
-          clearInterval(intervals[i]);
-        }
+        //var num_snapshots = 4;
+        //for (var i = 0; i < num_snapshots; i++) {
+
+        //Stop taking a picture every 1000 ms (1 second)
+        clearInterval(interval);
+        //}
       }
 
     	function take_snapshot() {
         // alert("Take Snapshot")
     		// take snapshot and get image data
     		Webcam.snap( function(data_uri) {
+          //console.log(text);
     			// display results in page
     			/*document.getElementById('results').innerHTML =
     				'<h2>Here is your image:</h2>' +

@@ -5,6 +5,12 @@ import shutil
 import time
 import requests
 import threading
+import io
+import base64
+import codecs
+import collections
+import numpy as np
+from PIL import Image
 
 def create_app():
     app = flask.Flask(__name__)
@@ -12,19 +18,22 @@ def create_app():
 
 app = create_app()
 
+#IGNORE ALL COMMENTED-OUT CODE FOR NOW
+
+'''
 @app.before_first_request
 def activate_job():
     def manage_buffer():
         while True:
-            time.sleep(1)
+            time.sleep(0.5)
             snaps = "snaps"
             dir = os.getcwd()
 
             image_list = get_image_names(os.path.join(dir, snaps))
             print(len(image_list))
 
-            if len(image_list) == 8:
-                for i in range(4):
+            if len(image_list) >= 8:
+                for i in (range(len(image_list) - 4)):
                     file_path = os.path.join(dir, snaps, image_list[i])
                     print(file_path)
                     try:
@@ -32,14 +41,15 @@ def activate_job():
                             os.unlink(file_path)
                     except Exception as e:
                         print(e)
-
     thread = threading.Thread(target=manage_buffer)
     thread.start()
+'''
 
 @app.route("/")
 def main():
     return flask.render_template("index.html")
 
+'''
 def start_runner():
     def start_loop():
         not_started = True
@@ -62,19 +72,41 @@ def start_runner():
 if __name__ == "__main__":
     start_runner()
     app.run()
+'''
+
+#Creating a circular buffer
+array_buffer = collections.deque(maxlen=4)
 
 counter = 0
 
-@app.route("/upload", methods=["POST"])
+@app.route("/upload", methods=['POST'])
 def upload_photo():
     global counter
     counter += 1
     #print(flask.request.data)
-    print(flask.request.files)
+    #print(flask.request.files)
+
     file = flask.request.files['webcam']
-    file.save("./snaps/" + "snap_{}.jpg".format(counter))
+    string = file.read()
+
+    base64_data = codecs.encode(string, 'base64')
+    image_bytes = io.BytesIO(base64.b64decode(base64_data))
+    image = Image.open(image_bytes)
+    array = np.array(image)[:,:,0]
+
+    #print(array)
+
+    #Append array to a circular buffer
+    array_buffer.append(array)
+    print(array_buffer)
+
+
+    #Pass array into a circular buffer here
+
+    #file.save("./snaps/" + "snap_{}.txt".format(counter))
     return flask.make_response(json.dumps({"status": "ok"}))
 
+'''
 def get_image_names(directory_):
     files = os.listdir(directory_)
     image_present = False
@@ -87,3 +119,4 @@ def get_image_names(directory_):
     if not image_present:
         print("Could not find any Images!")
     return images
+'''
