@@ -49,6 +49,10 @@ def activate_job():
 def main():
     return flask.render_template("index.html")
 
+@app.route("/upload")
+def show_page():
+    return flask.render_template("upload.html")
+
 '''
 def start_runner():
     def start_loop():

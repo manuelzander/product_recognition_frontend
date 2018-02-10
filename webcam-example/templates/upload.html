@@ -6,8 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
-
-    <title>OMEGAP Snapshot and Classification Page</title>
+    <title>OMEGAP Upload and Classification Page</title>
 
     <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
 
@@ -17,9 +16,10 @@
     <link href="starter-template.css" rel="stylesheet">
   </head>
 
+
   <body>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
       <a class="navbar-brand" href="#">OMEGAP</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -27,10 +27,10 @@
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
           <li class="nav-item">
+            <a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
             <a class="nav-link" href="/upload">Upload</a>
           </li>
           <li class="nav-item">
@@ -52,74 +52,23 @@
       </div>
     </nav>
 
-    <main role="main" class="flex-container">>
 
-      <div class="starter-template">
-          <div id="my_camera" style="margin: 0 auto; text-align: center; padding-top: 50px;"></div>
-          <div id="snapshot-buttons" style="margin: 0 auto; text-align: center; padding-top: 80px;" >
-              <form>
-                  <input type=button value="Take a snapshot" onClick="take_snapshot()">
-              </form><br>
-              <form>
-                  <input type=button value="Take snapshots (loop)" onClick="take_snapshot_loop()">
-                  <input type=button value="Stop loop" onClick="stop_taking_snapshot()">
-              </form>
+      <main role="main" class="container">
+          <div class="starter-template">
+            <h1>Upload page</h1>
+              <div style="margin: 0 auto; text-align: center; padding-top: 50px;">
+                <form>
+                 <input type=button value="Upload Image"> {#onClick="upload_image()"#}
+                </form>
+                <br>
+                <form>
+                    <input type=button value="Upload Images"> {#onClick="upload_images()"#}
+                </form>
+              </div>
           </div>
-      </div>
+      </main>
 
-      <script language="JavaScript">
-      Webcam.set({
-  			width: 320,
-  			height: 240,
-  			image_format: 'jpeg',
-  			jpeg_quality: 90
-  		});
-
-  		Webcam.attach( '#my_camera' );
-
-      //var intervals = [0,0,0,0];
-
-      function take_snapshot_loop() {
-
-          //Take a picture every 1000 ms (1 second)
-          var interval = setInterval(take_snapshot, 1000);
-          //intervals = [i1, i2, i3, i4];
-
-          return interval;
-      }
-
-      function stop_taking_snapshot() {
-        //var num_snapshots = 4;
-        //for (var i = 0; i < num_snapshots; i++) {
-
-        //Stop taking a picture every 1000 ms (1 second)
-        clearInterval(interval);
-        //}
-      }
-
-    	function take_snapshot() {
-            // alert("Take Snapshot")
-    		// take snapshot and get image data
-            Webcam.snap( function(data_uri) {
-                //console.log(text);
-    			// display results in page
-    			/*document.getElementById('results').innerHTML =
-    				'<h2>Here is your image:</h2>' +
-    				'<img src="'+data_uri+'"/>';*/
-            Webcam.upload( data_uri, "{{ url_for('upload_photo') }}", function(code, text) {
-    		    // Upload complete!
-    		    // 'code' will be the HTTP response code from the server, e.g. 200
-    		    // 'text' will be the raw response content
-                //console.log(text);
-    	    });
-    		});
-        }
-    	</script>
-
-    </main><!-- /.container -->
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
+      <!-- Bootstrap core JavaScript ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
