@@ -14,7 +14,6 @@
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
   </head>
 
   <body>
@@ -77,24 +76,24 @@
 
   		Webcam.attach( '#my_camera' );
 
-      //var intervals = [0,0,0,0];
+      var timer = null;
 
       function take_snapshot_loop() {
+        alert("Started taking pictures!");
 
-          //Take a picture every 1000 ms (1 second)
-          var interval = setInterval(take_snapshot, 1000);
-          //intervals = [i1, i2, i3, i4];
-
-          return interval;
+        if (!timer) {
+          take_snapshot();
+          timer = setInterval( take_snapshot, 250 );
+        }
       }
 
       function stop_taking_snapshot() {
-        //var num_snapshots = 4;
-        //for (var i = 0; i < num_snapshots; i++) {
+        alert("Stopped taking pictures!");
 
-        //Stop taking a picture every 1000 ms (1 second)
-        clearInterval(interval);
-        //}
+        if (timer) {
+  				clearTimeout(timer);
+  				timer = null;
+			  }
       }
 
     	function take_snapshot() {
