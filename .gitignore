@@ -1,2 +1,5 @@
 .idea/
 .DS_Store
+webcam-example/cypress/*
+!webcam-example/cypress/integration/index_spec.js
+node_modules

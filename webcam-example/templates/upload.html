@@ -56,13 +56,13 @@
       <main role="main" class="container">
           <div class="starter-template">
             <h1>Upload page</h1>
-              <div style="margin: 0 auto; text-align: center; padding-top: 50px;">
+              <div id="upload" style="margin: 0 auto; text-align: center; padding-top: 50px;">
                 <form>
-                 <input type=button value="Upload Image"> {#onClick="upload_image()"#}
+                 <input id="single-upload" type=button value="Upload Image"> {#onClick="upload_image()"#}
                 </form>
                 <br>
                 <form>
-                    <input type=button value="Upload Images"> {#onClick="upload_images()"#}
+                    <input id="multiple-upload" type=button value="Upload Images"> {#onClick="upload_images()"#}
                 </form>
               </div>
           </div>
