@@ -1,12 +1,18 @@
+language: python
+
+python:
+  - 3.6
+
 # install dependencies
 install:
-  - npm install
+  - pip install -r requirements/dev.txt
+  - npm install cypress --save-dev
 
 # this needs to be running before the tests are run
 
 script:
   - "echo 'Initiating flask app'"
-  - directory_location.sh
+  - run directory_location.sh
   - "export FLASK_APP=app.py"
   - "flask run"
   - "echo 'Running Integration tests'"
