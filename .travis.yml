@@ -1,0 +1,18 @@
+# install dependencies
+install:
+  - npm install
+
+# this needs to be running before the tests are run
+before_script:
+  - "echo 'Initiating flask app'"
+  - " export FLASK_APP=app.py"
+  - "cd webcam_example"
+  - "flask run"
+
+script:
+  - "echo 'Running Integration tests'"
+  - "cypress run --spec /cypress/integration/index_spec.js"
+  - sleep 3 # give time to completely finish off
+
+deploy:
+  skip_cleanup: true
