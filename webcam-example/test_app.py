@@ -29,7 +29,7 @@ class AppTestCase(unittest.TestCase):
         with open('test.jpg', 'rb') as img1:
             img1StringIO = io.BytesIO(img1.read())
 
-        result = self.app.post('/send',
+        result = self.app.post('/send_from_webcam',
                                  content_type='multipart/form-data',
                                  data={'webcam': (img1StringIO, 'test.jpg')},
                                  follow_redirects=True)
@@ -37,6 +37,9 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(result.data, b'{"status": "ok"}')
         self.assertEqual(result.status_code, 200)
         self.assertEqual(app.array_buffer[-1].shape, (240, 320))
+
+    def tearDown(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()

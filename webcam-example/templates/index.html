@@ -53,7 +53,7 @@
 
     <main role="main" class="flex-container">>
 
-      <div class="starter-template">
+      <div>
           <div id="my_camera" style="margin: 0 auto; text-align: center; padding-top: 50px;"></div>
           <div id="snapshot-buttons" style="margin: 0 auto; text-align: center; padding-top: 80px;" >
               <form>
@@ -63,6 +63,7 @@
                   <input type=button value="Take snapshots (loop)" onClick="take_snapshot_loop()">
                   <input type=button value="Stop loop" onClick="stop_taking_snapshot()">
               </form>
+              <div id="output"></div>
           </div>
       </div>
 
@@ -79,7 +80,7 @@
       var timer = null;
 
       function take_snapshot_loop() {
-        alert("Started taking pictures!");
+        //alert("Started taking pictures!");
 
         if (!timer) {
           take_snapshot();
@@ -88,7 +89,7 @@
       }
 
       function stop_taking_snapshot() {
-        alert("Stopped taking pictures!");
+        //alert("Stopped taking pictures!");
 
         if (timer) {
   				clearTimeout(timer);
@@ -97,7 +98,7 @@
       }
 
     	function take_snapshot() {
-            // alert("Take Snapshot")
+        // alert("Take Snapshot")
     		// take snapshot and get image data
             Webcam.snap( function(data_uri) {
                 //console.log(text);
@@ -105,7 +106,7 @@
     			/*document.getElementById('results').innerHTML =
     				'<h2>Here is your image:</h2>' +
     				'<img src="'+data_uri+'"/>';*/
-            Webcam.upload( data_uri, "{{ url_for('send_to_server') }}", function(code, text) {
+            Webcam.upload( data_uri, "{{ url_for('send_to_server_webcam') }}", function(code, text) {
     		    // Upload complete!
     		    // 'code' will be the HTTP response code from the server, e.g. 200
     		    // 'text' will be the raw response content
@@ -113,6 +114,26 @@
     	    });
     		});
         }
+
+      var output = document.getElementById('output');
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '{{ url_for('stream') }}');
+      xhr.send();
+
+      function handleNewData() {
+        output.textContent = xhr.responseText;
+      }
+
+      var timer2;
+      timer2 = setInterval(function() {
+        // check the response for new data
+        handleNewData();
+        // stop checking once the response has ended
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+        clearInterval(timer2);
+        }
+      }, 1000);
+
     	</script>
 
     </main><!-- /.container -->
