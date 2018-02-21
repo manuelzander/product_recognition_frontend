@@ -29,6 +29,8 @@ def show_page():
 
 #Creating a circular buffer
 array_buffer = collections.deque(maxlen=4)
+array = [1,2,3]
+array_buffer.append(array)
 picture_buffer = None
 
 counter = 0
@@ -55,7 +57,7 @@ def send_to_server_webcam():
     #file.save("./snaps/" + "snap_{}.jpg".format(counter))
     return flask.make_response(json.dumps({"status": "ok"}))
 
-@app.route("/send_from_file", methods = ['GET', 'POST'])
+@app.route("/send_from_file", methods = ['POST'])
 def send_to_server_file():
 
     file = flask.request.files['file']
@@ -74,20 +76,12 @@ def send_to_server_file():
 
 @app.route('/stream')
 def stream():
-    test = [1,2,3,4,5,6]
-    test = json.dumps(test)
-    return flask.make_response(test)
-
-'''
-def stream():
-
     def generate():
-        for i in range(500):
-            yield '{}\n'.format(i)
+        while True:
+            yield json.dumps(array_buffer[-1])
             sleep(1)
 
     return app.response_class(generate(), mimetype='text/event-stream')
-'''
 
 @app.errorhandler(404)
 def page_not_found(e):
