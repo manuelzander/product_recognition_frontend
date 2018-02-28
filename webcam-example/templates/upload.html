@@ -6,14 +6,12 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
-    <title>OMEGAP Upload and Classification Page</title>
 
-    <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
+    <title>OMEGAP Upload and Classification Page</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
   </head>
 
 
@@ -57,12 +55,10 @@
           <div class="starter-template">
             <h1>Upload page</h1>
               <div style="margin: 0 auto; text-align: center; padding-top: 50px;">
-                <form>
-                 <input type=button value="Upload Image"> {#onClick="upload_image()"#}
-                </form>
-                <br>
-                <form>
-                    <input type=button value="Upload Images"> {#onClick="upload_images()"#}
+                <form action = "{{ url_for('send_to_server_file') }}" method = "POST"
+                enctype = "multipart/form-data">
+                <input type = "file" name = "file" />
+                <input type = "submit"/>
                 </form>
               </div>
           </div>
