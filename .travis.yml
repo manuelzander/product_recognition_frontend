@@ -19,7 +19,7 @@ pre_script:
   - sleep 5
 
 script:
-  - "export FLASK_APP=app.py"
+  - "export FLASK_APP=webcam-example/app.py"
   - "flask run"
   - "echo 'Running Integration tests'"
   - "cypress run --spec /cypress/integration/index_spec.js"
