@@ -83,7 +83,7 @@ array_buffer = collections.deque(maxlen=4)
 
 counter = 0
 
-@app.route("/upload", methods=['POST'])
+@app.route("/uploads", methods=['POST'])
 def upload_photo():
     global counter
     counter += 1
