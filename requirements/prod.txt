@@ -21,4 +21,4 @@ base64
 codecs
 collections
 numpy
-PIL
+Pillow
