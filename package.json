@@ -1,5 +1,10 @@
 {
   "devDependencies": {
     "cypress": "^2.0.3"
+  },
+  "scripts": {
+    "start": "flask run",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test start http://localhost:5050 cy:run"
   }
 }
