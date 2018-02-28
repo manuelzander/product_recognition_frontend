@@ -20,12 +20,11 @@ install:
 pre_script:
   - echo 'Initiating flask app'
   - directory_location.sh
-
-script:
   - export FLASK_APP=webcam-example/app.py
   - flask run
-  - wait-on http://127.0.0.1:5000/
   - echo 'Running on http://127.0.0.1:5000/'
+
+script:
   - $(npm bin)/cypress run --spec /cypress/integration/index_spec.js
   - sleep 5 # give time to completely finish off
 
