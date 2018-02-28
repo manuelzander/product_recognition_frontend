@@ -18,9 +18,9 @@ install:
   - pip install -r requirements/dev.txt
 
 # this needs to be running before the tests are run
-#pre_script:
-#  - echo 'Initiating flask app'
-#  - export FLASK_APP=webcam-example/app.py
+pre_script:
+  - echo 'Initiating flask app'
+  - export FLASK_APP=webcam-example/app.py
 
 
 script:
