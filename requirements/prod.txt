@@ -10,15 +10,6 @@ behave==1.2.5
 WebTest==2.0.29
 
 #python dependencies
-json
-os
-shutil
-time
 requests
-threading
-io
-base64
-codecs
-collections
 numpy
 Pillow
