@@ -6,6 +6,7 @@ python:
 # install dependencies
 install:
   - pip install -r requirements/dev.txt
+  - nvm install 0.10
   - npm install cypress --save-dev
 
 # this needs to be running before the tests are run
