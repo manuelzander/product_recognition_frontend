@@ -13,8 +13,8 @@ before_install:
 
 # install dependencies
 install:
-  - pip install -r requirements/dev.txt
   - npm install
+  - pip install -r requirements/dev.txt
 
 # this needs to be running before the tests are run
 pre_script:
@@ -26,7 +26,7 @@ script:
   - flask run
   - wait-on http://127.0.0.1:5000/
   - echo 'Running on http://127.0.0.1:5000/'
-  - cypress run --spec /cypress/integration/index_spec.js
+  - $(npm bin)/cypress run --spec /cypress/integration/index_spec.js
   - sleep 5 # give time to completely finish off
 
 deploy:
