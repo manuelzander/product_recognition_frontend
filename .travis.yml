@@ -1,9 +1,14 @@
 language: python
-
 python:
   - 3.6
 
+cache:
+  directories:
+    - ~/.npm
+    - node_modules
+
 before_install:
+  - pip install requests
   - nvm install 6.11
   - nvm use 6.11
 
