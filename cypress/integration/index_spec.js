@@ -3,7 +3,7 @@ describe('Uploads page', function() {
 
     it('cy.should - assert that <title> is correct', function() {
         // Get the site title and check value
-        cy.visit('http://127.0.0.1:5000/upload')
+        cy.visit('http://localhost:5000/upload')
         cy.title().should('include', 'OMEGAP')
     })
 
