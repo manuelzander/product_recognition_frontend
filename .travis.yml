@@ -19,13 +19,12 @@ install:
 # this needs to be running before the tests are run
 pre_script:
   - echo 'Initiating flask app'
-  - directory_location.sh
   - export FLASK_APP=webcam-example/app.py
   - flask run
   - echo 'Running on http://127.0.0.1:5000/'
 
 script:
-  - directory_location.sh
+  - cd webcam-example
   - $(npm bin)/cypress run --spec cypress/integration/index_spec.js
   - sleep 5 # give time to completely finish off
 
