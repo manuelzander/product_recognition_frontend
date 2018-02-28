@@ -16,10 +16,10 @@ install:
 pre_script:
   - "echo 'Initiating flask app'"
   - directory_location.sh
-  - "export FLASK_APP=app.py"
   - sleep 5
 
 script:
+  - "export FLASK_APP=app.py"
   - "flask run"
   - "echo 'Running Integration tests'"
   - "cypress run --spec /cypress/integration/index_spec.js"
