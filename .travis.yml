@@ -25,7 +25,8 @@ pre_script:
   - echo 'Running on http://localhost:5000/'
 
 script:
-  - $(npm bin)/cypress run --spec cypress/integration/index_spec.js
+#  - $(npm bin)/cypress run --spec cypress/integration/index_spec.js
+  - $(npm bin)/cypress run
 
 deploy:
   skip_cleanup: true
