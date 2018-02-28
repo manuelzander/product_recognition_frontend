@@ -9,6 +9,7 @@ cache:
 
 before_install:
   - pip install requests
+  - pip install PIL
   - nvm install 6.11
   - nvm use 6.11
 
