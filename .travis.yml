@@ -24,7 +24,6 @@ pre_script:
   - echo 'Running on http://127.0.0.1:5000/'
 
 script:
-  - cd webcam-example
   - $(npm bin)/cypress run --spec cypress/integration/index_spec.js
   - sleep 5 # give time to completely finish off
 
