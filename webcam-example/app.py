@@ -1,8 +1,13 @@
 import flask
+import flask_socketio
+import threading
+import queue
 import json
+import time
+import numpy
+import random
 #import os
 #import shutil
-#import time
 #import requests
 #import threading
 import io
@@ -11,17 +16,16 @@ import codecs
 import collections
 import numpy as np
 from PIL import Image
-from time import sleep
 
-def create_app():
-    app = flask.Flask(__name__)
-    return app
+app = flask.Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = flask_socketio.SocketIO(app, async_mode=None)
 
-app = create_app()
+input_q = queue.Queue()
 
 @app.route("/")
-def main():
-    return flask.render_template("index.html")
+def index():
+    return flask.render_template('index.html')
 
 @app.route("/upload")
 def show_page():
@@ -37,7 +41,9 @@ counter = 0
 
 @app.route("/send_from_webcam", methods=['POST'])
 def send_to_server_webcam():
+
     global counter
+    
     counter += 1
     #print(flask.request.data)
     #print(flask.request.files)
@@ -52,13 +58,20 @@ def send_to_server_webcam():
 
     #Append array to a circular buffer
     array_buffer.append(array)
-    print(array_buffer[-1])
+    #print(array_buffer[-1])
+    #input_q.put(array_buffer[-1])
+
+    #Placeholder for prediction function
+    random_list = random.sample(range(10), 10)
+    input_q.put(random_list)
 
     #file.save("./snaps/" + "snap_{}.jpg".format(counter))
     return flask.make_response(json.dumps({"status": "ok"}))
 
 @app.route("/send_from_file", methods = ['POST'])
 def send_to_server_file():
+
+    global picture_buffer
 
     file = flask.request.files['file']
     string = file.read()
@@ -74,15 +87,30 @@ def send_to_server_file():
     flask.make_response(json.dumps({"status": "ok"}))
     return flask.render_template("index.html")
 
-@app.route('/stream')
-def stream():
-    def generate():
-        while True:
-            yield json.dumps(array_buffer[-1])
-            sleep(1)
+'''
+@app.route("/send/<message>")
+def send_msg(message):
+    input_q.put(message)
+    return flask.Response(status=200)
+'''
 
-    return app.response_class(generate(), mimetype='text/event-stream')
+def count_thread():
+    i = 0
+    while True:
+        test = input_q.get()
+        #print(test)
+        i += 1
+        print(i)
+        #column = test[:,1]
+        #print(column)
+        socketio.emit('scan', {"text": "Prediction {}".format(test)})
 
 @app.errorhandler(404)
 def page_not_found(e):
     return flask.render_template('404.html'), 404
+
+if __name__=="__main__":
+    thread = threading.Thread(target=count_thread)
+    thread.daemon = True
+    thread.start()
+    socketio.run(app, debug=True)

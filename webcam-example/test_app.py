@@ -38,6 +38,19 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertEqual(app.array_buffer[-1].shape, (240, 320))
 
+    def test_file_upload(self):
+
+        with open('test.jpg', 'rb') as img1:
+            img1StringIO = io.BytesIO(img1.read())
+
+        result = self.app.post('/send_from_file',
+                                 content_type='multipart/form-data',
+                                 data={'file': (img1StringIO, 'test.jpg')},
+                                 follow_redirects=True)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(app.picture_buffer.shape, (240, 320))
+
     def tearDown(self):
         pass
 
