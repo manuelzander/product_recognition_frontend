@@ -10,7 +10,7 @@ import base64
 import codecs
 import collections
 import numpy as np
-from Pillow import Image
+from PIL import Image
 
 def create_app():
     app = flask.Flask(__name__)
