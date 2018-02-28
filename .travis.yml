@@ -20,15 +20,15 @@ install:
 
 # this needs to be running before the tests are run
 pre_script:
-  - "echo 'Initiating flask app'"
+  - echo 'Initiating flask app'
   - directory_location.sh
-  - sleep 5
 
 script:
-  - "export FLASK_APP=webcam-example/app.py"
-  - "flask run"
-  - "echo 'Running Integration tests'"
-  - "cypress run --spec /cypress/integration/index_spec.js"
+  - export FLASK_APP=webcam-example/app.py
+  - flask run
+  - wait-on http://127.0.0.1:5000/
+  - echo 'Running on http://127.0.0.1:5000/'
+  - cypress run --spec /cypress/integration/index_spec.js
   - sleep 5 # give time to completely finish off
 
 deploy:
