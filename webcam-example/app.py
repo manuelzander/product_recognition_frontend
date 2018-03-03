@@ -33,8 +33,6 @@ def show_page():
 
 #Creating a circular buffer
 array_buffer = collections.deque(maxlen=4)
-array = [1,2,3]
-array_buffer.append(array)
 picture_buffer = None
 
 counter = 0
@@ -97,13 +95,13 @@ def send_msg(message):
 def count_thread():
     i = 0
     while True:
-        test = input_q.get()
+        time.sleep(1)
+        random_list = random.sample(range(10), 10)
+        #test = input_q.get()
         #print(test)
-        i += 1
-        print(i)
-        column = test[:,1]
+        #column = test[:,1]
         #print(column)
-        socketio.emit('scan', {"text": "Prediction {}".format(test)})
+        socketio.emit('scan', {"text": "Prediction {}".format(random_list)})
 
 @app.errorhandler(404)
 def page_not_found(e):
