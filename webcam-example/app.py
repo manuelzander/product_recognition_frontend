@@ -95,9 +95,9 @@ def send_msg(message):
 def count_thread():
     i = 0
     while True:
-        #time.sleep(1)
-        #random_list = random.sample(range(10), 10)
-        test = input_q.get()
+        time.sleep(1)
+        random_list = np.random.rand(5)
+        #test = input_q.get()
         #print(test)
         #column = test[:,1]
         #print(column)
