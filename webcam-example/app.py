@@ -95,13 +95,13 @@ def send_msg(message):
 def count_thread():
     i = 0
     while True:
-        time.sleep(1)
-        random_list = random.sample(range(10), 10)
-        #test = input_q.get()
+        #time.sleep(1)
+        #random_list = random.sample(range(10), 10)
+        test = input_q.get()
         #print(test)
         #column = test[:,1]
         #print(column)
-        socketio.emit('scan', {"text": "Prediction {}".format(random_list)})
+        socketio.emit('scan', {"text": "Prediction {}".format(test)})
 
 @app.errorhandler(404)
 def page_not_found(e):
