@@ -43,7 +43,7 @@ counter = 0
 def send_to_server_webcam():
 
     global counter
-    
+
     counter += 1
     #print(flask.request.data)
     #print(flask.request.files)
@@ -59,11 +59,11 @@ def send_to_server_webcam():
     #Append array to a circular buffer
     array_buffer.append(array)
     #print(array_buffer[-1])
-    #input_q.put(array_buffer[-1])
+    input_q.put(array_buffer[-1])
 
     #Placeholder for prediction function
-    random_list = random.sample(range(10), 10)
-    input_q.put(random_list)
+    #random_list = random.sample(range(10), 10)
+    #input_q.put(random_list)
 
     #file.save("./snaps/" + "snap_{}.jpg".format(counter))
     return flask.make_response(json.dumps({"status": "ok"}))
@@ -101,7 +101,7 @@ def count_thread():
         #print(test)
         i += 1
         print(i)
-        #column = test[:,1]
+        column = test[:,1]
         #print(column)
         socketio.emit('scan', {"text": "Prediction {}".format(test)})
 
