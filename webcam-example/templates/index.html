@@ -36,6 +36,9 @@
     <div class="modal-body row">
     <div class="col-md-6">
 
+      <br>
+      <h4>Image Capturing</h4>
+
       <div id="my_camera" style="margin: 0 auto; text-align: center; padding-top: 50px;"></div>
       <div id="snapshot-buttons" style="margin: 0 auto; text-align: center; padding-top: 80px;" >
 
@@ -48,11 +51,10 @@
 
     </div>
     <div class="col-md-6">
+
       <br>
       <h4>Predictions</h4>
       <canvas id="myChart" width="400" height="300"></canvas>
-
-
 
       <!--<ul id="predictions">-->
 
@@ -93,21 +95,14 @@
         scales: {
             yAxes: [{
                 ticks: {
-                    beginAtZero:true
+                      max: 1,
+                      min: 0,
+                      stepSize: 0.1
                 }
             }]
         }
     }
 });
-
-/*setTimeout(function() {
-   addData(myChart, [12, 1, 3, 5, 2, 3], 0);
-}, 2000);
-
-function addData(chart, data, datasetIndex) {
-   chart.data.datasets[datasetIndex].data = data;
-   chart.update();
-}*/
 
 </script>
 
@@ -128,11 +123,43 @@ function addData(chart, data, datasetIndex) {
   <script type="text/javascript" charset="utf-8">
 
     var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var a = "0.49077216 0.54543578 0.38363459 0.48083468 0.54543578 0.38363459";
 
     socket.on('scan', function(msg) {
-      console.log(msg.text);
+      //console.log(msg.text);
       $("#predictions").append($('<li>').text(msg.text));
+
+      var string = msg.text;
+
+      //console.log(a);
+
+      string = string.replace(/[&\/\\#+()[]$~%'":*?<>{}]/g,'');
+      //console.log(string);
+
+
+      var b = string.split(' ');
+      console.log(b);
+      var b = b.map(Number);
+
+      //console.log(b);
+
+
+      setTimeout(function() {
+         addData(myChart, b, 0);
+      }, 100);
+
+      function addData(chart, data, datasetIndex) {
+         chart.data.datasets[datasetIndex].data = data;
+         chart.update();
+      }
+
+
+
+
     });
+
+
+
 
 
   </script>
