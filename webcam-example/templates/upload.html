@@ -57,7 +57,7 @@
               <div style="margin: 0 auto; text-align: center; padding-top: 50px;">
                 <form action = "{{ url_for('send_to_server_file') }}" method = "POST"
                 enctype = "multipart/form-data">
-                <input type = "file" name = "file" />
+                <input id="choose-file" type = "file" name = "file" />
                 <input type = "submit"/>
                 </form>
               </div>

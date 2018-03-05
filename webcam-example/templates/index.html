@@ -24,7 +24,7 @@
           <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/upload">Upload</a>
+          <a class="nav-link" id="upload-nav-link" href="/upload">Upload</a>
         </li>
         <li class="nav-item">
           <a class="nav-link disabled" href="#">Disabled</a>
@@ -50,7 +50,7 @@
     <div id="my_camera" style="margin: 0 auto; text-align: center; padding-top: 50px;"></div>
     <div id="snapshot-buttons" style="margin: 0 auto; text-align: center; padding-top: 80px;" >
         <form>
-            <input type=button value="Take a snapshot" onClick="take_snapshot()">
+            <input id="snapshot_btn" type=button value="Take a snapshot" onClick="take_snapshot()">
         </form><br>
         <form>
             <input type=button value="Take snapshots (loop)" onClick="take_snapshot_loop()">
