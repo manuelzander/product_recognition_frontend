@@ -98,7 +98,7 @@ def count_thread():
         time.sleep(1)
         random_list = np.round(np.random.rand(6), decimals=2)
         #test = input_q.get()
-        #print(test)
+        print(random_list)
         #column = test[:,1]
         #print(column)
         socketio.emit('scan', {"text": "{}".format(random_list)})
