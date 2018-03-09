@@ -9,6 +9,10 @@
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
+
 </head>
 
 <body>
@@ -64,113 +68,84 @@
   </main><!-- /.container -->
 
   <script>
-  var ctx = document.getElementById("myChart").getContext('2d');
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6"],
-        datasets: [{
-            label: 'Probability per class',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                      max: 1,
-                      min: 0,
-                      stepSize: 0.1
-                }
-            }]
-        }
-    }
-});
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6"],
+          datasets: [{
+              label: 'Probability per class',
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                        max: 1,
+                        min: 0,
+                        stepSize: 0.1
+                  }
+              }]
+          }
+      }
+  });
+  </script>
 
-</script>
 
-  <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
+  <script type="text/javascript" charset="utf-8">
 
-	<script language="JavaScript">
-		Webcam.set({
+    //Webcam set-up
+    Webcam.set({
 			width: 320,
 			height: 240,
 			image_format: 'jpeg',
 			jpeg_quality: 90
 		});
+
 		Webcam.attach( '#my_camera' );
-	</script>
 
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-  <script type="text/javascript" charset="utf-8">
-
+    //SocketIO set-up and update of chart
     var socket = io.connect('http://' + document.domain + ':' + location.port);
-    var a = "0.49077216 0.54543578 0.38363459 0.48083468 0.54543578 0.38363459";
 
-    socket.on('scan', function(msg) {
-      //console.log(msg.text);
-      $("#predictions").append($('<li>').text(msg.text));
+    var data = [];
 
-      var string = msg.text;
-
-      //console.log(a);
-
-      string = string.replace(/[&\/\\#+()[]$~%'":*?<>{}]/g,'');
-      //console.log(string);
-
-
-      var b = string.split(' ');
-    
-      var b = b.map(Number);
-
-      //console.log(b);
-
+    socket.on('scan', function(incoming_data) {
+      //$("#predictions").append($('<li>').text(msg.text));
+      data = JSON.parse(incoming_data);
 
       setTimeout(function() {
-         addData(myChart, b, 0);
+         addData(myChart, data, 0);
       }, 100);
 
       function addData(chart, data, datasetIndex) {
          chart.data.datasets[datasetIndex].data = data;
          chart.update();
       }
-
-
-
-
     });
 
-
-
-
-
-  </script>
-
-	<script language="JavaScript">
-
+    //Webcam functions
     var timer = null;
 
     function take_snapshot_loop() {
       //alert("Started taking pictures!");
-
       if (!timer) {
         take_snapshot();
         timer = setInterval( take_snapshot, 250 );
@@ -179,27 +154,16 @@
 
     function stop_taking_snapshot() {
       //alert("Stopped taking pictures!");
-
       if (timer) {
         clearTimeout(timer);
         timer = null;
       }
     }
 
+    //Taking pictures with webcam
     function take_snapshot() {
-      // alert("Take Snapshot")
-      // take snapshot and get image data
           Webcam.snap( function(data_uri) {
-              //console.log(text);
-        // display results in page
-        /*document.getElementById('results').innerHTML =
-          '<h2>Here is your image:</h2>' +
-          '<img src="'+data_uri+'"/>';*/
           Webcam.upload( data_uri, "{{ url_for('send_to_server_webcam') }}", function(code, text) {
-          // Upload complete!
-          // 'code' will be the HTTP response code from the server, e.g. 200
-          // 'text' will be the raw response content
-              //console.log(text);
         });
       });
       }

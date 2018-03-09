@@ -97,11 +97,13 @@ def count_thread():
     while True:
         time.sleep(1)
         random_list = np.round(np.random.rand(6), decimals=2)
+        random_list = random_list.tolist()
         #test = input_q.get()
-        print(random_list)
+        #print(random_list)
         #column = test[:,1]
         #print(column)
-        socketio.emit('scan', {"text": "{}".format(random_list)})
+        #socketio.emit('scan', {"text": "{}".format(random_list)})
+        socketio.emit('scan', json.dumps(random_list))
 
 @app.errorhandler(404)
 def page_not_found(e):
