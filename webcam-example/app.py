@@ -95,7 +95,7 @@ def send_msg(message):
 def count_thread():
     i = 0
     while True:
-        time.sleep(1)
+        time.sleep(5)
         random_list = np.round(np.random.rand(6), decimals=2)
         random_list = random_list.tolist()
         #test = input_q.get()
