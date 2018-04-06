@@ -80,6 +80,7 @@
   </main><!-- /.container -->
 
   <script>
+    //Chart set-up
     var ctx = document.getElementById("myChart").getContext('2d');
     var myChart = new Chart(ctx, {
       type: 'bar',
@@ -134,59 +135,50 @@
         height: { exact: 512 }
       }
     });
-
-    //Intialize webcam
 		Webcam.attach( '#my_camera' );
 
-    //SocketIO set-up and update of chart
-    function add_data(chart, data, datasetIndex) {
-       chart.data.datasets[datasetIndex].data = data;
-       chart.update();
-    }
-
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
-
+    //SocketIO set-up and intialization of variables
+    var timer = null;
     var data = [];
     var max_of_array = 0;
     var index_max_of_array = 0;
     var class_number = 0;
     var threshold = 0.9;
 
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
     socket.on('scan', function(incoming_data) {
       //console.log(incoming_data);
       //$("#predictions").append($('<li>').text(msg.text));
       data = JSON.parse(incoming_data);
 
+      add_data(myChart, data, 0);
+
       max_of_array = Math.max.apply(Math, data);
       index_max_of_array = data.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
       class_number = index_max_of_array + 1;
 
-      if (max_of_array >= threshold)
+      if (max_of_array >= threshold){
         $("#history").append($('<li>').text("Prediction: Class " + class_number + "; Accuracy: " + 100*max_of_array + "%"));
-
-      add_data(myChart, data, 0);
-      change_image();
-
-      //setTimeout(function() {
-      //   add_data(myChart, data, 0);
-      //}, 100);
+        change_image();
+      }
     });
+
+    //Function to update the chart
+    function add_data(chart, data, datasetIndex) {
+       chart.data.datasets[datasetIndex].data = data;
+       chart.update();
+    }
 
     //Function to update the product image
     function change_image(){
       var image = document.getElementById("product_image");
       var image_source = "/static/" + class_number.toString() + ".jpg";
-
-      if (max_of_array >= threshold){
-        image.setAttribute("src", image_source);
-      }
+      image.setAttribute("src", image_source);
     }
 
     //Webcam functions
-    var timer = null;
-
     function take_snapshot_loop() {
-      //alert("Started taking pictures!");
       if (!timer) {
         take_snapshot();
         timer = setInterval( take_snapshot, 250 );
@@ -194,14 +186,12 @@
     }
 
     function stop_taking_snapshot() {
-      //alert("Stopped taking pictures!");
       if (timer) {
         clearTimeout(timer);
         timer = null;
       }
     }
 
-    //Taking pictures with webcam
     function take_snapshot() {
           Webcam.snap( function(data_uri) {
           Webcam.upload( data_uri, "{{ url_for('send_to_server_webcam') }}", function(code, text) {
