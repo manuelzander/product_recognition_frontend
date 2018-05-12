@@ -6,15 +6,14 @@ import json
 import time
 import numpy
 import random
-#import os
-#import shutil
-#import requests
-#import threading
+import tensorflow as tf
 import io
 import base64
 import codecs
 import collections
 import numpy as np
+import keras
+import cv2
 from PIL import Image
 
 app = flask.Flask(__name__)
@@ -37,6 +36,32 @@ picture_buffer = None
 
 counter = 0
 
+model_path = "/Users/manuelzander/Computer_Science/Ocado/group-project-front-end/webcam-example/intermediate.hdf5"
+#print(model.summary())
+
+model = keras.models.load_model(model_path)
+model._make_predict_function()
+graph = tf.get_default_graph()
+
+def predict():
+    if(len(array_buffer) < 4):
+        return
+
+    list_of_images = []
+    for item in array_buffer:
+        list_of_images.append(item)
+
+    pictures = np.asarray(list_of_images)
+
+    with graph.as_default():
+        predictions = model.predict(pictures)#np.expand_dims(pictures[0,:,:,:],axis=0))
+
+    #print(predictions.shape)
+    #print(predictions)
+    #print(np.argmax(np.sum(predictions[:,0:10],axis = 0)))
+    print(np.sum(predictions[:,0:10],axis = 0))
+    return np.sum(predictions[:,0:10],axis = 0)
+
 @app.route("/send_from_webcam", methods=['POST'])
 def send_to_server_webcam():
 
@@ -50,18 +75,15 @@ def send_to_server_webcam():
     string = file.read()
     base64_data = codecs.encode(string, 'base64')
     image_bytes = io.BytesIO(base64.b64decode(base64_data))
-    image = Image.open(image_bytes)
-    array = np.array(image)[:,:,0]
-    assert array.shape == (240, 320)
-
+    image = np.array(Image.open(image_bytes))
+    #array = np.array(image)[:,:,0]
+    #assert array.shape == (240, 320)
+    #print(array)
+    #print(array.shape)
+    array = cv2.resize(image, (250, 250))
+    array = (array / 255)
     #Append array to a circular buffer
     array_buffer.append(array)
-    #print(array_buffer[-1])
-    input_q.put(array_buffer[-1])
-
-    #Placeholder for prediction function
-    #random_list = random.sample(range(10), 10)
-    #input_q.put(random_list)
 
     #file.save("./snaps/" + "snap_{}.jpg".format(counter))
     return flask.make_response(json.dumps({"status": "ok"}))
@@ -95,15 +117,21 @@ def send_msg(message):
 def count_thread():
     i = 0
     while True:
-        time.sleep(1)
-        random_list = np.round(np.random.rand(6), decimals=2)
-        random_list = random_list.tolist()
-        #test = input_q.get()
-        #print(random_list)
-        #column = test[:,1]
-        #print(column)
-        #socketio.emit('scan', {"text": "{}".format(random_list)})
-        socketio.emit('scan', json.dumps(random_list))
+        if (len(array_buffer) >= 4):
+            time.sleep(1)
+            '''
+            random_list = np.round(np.random.rand(6), decimals=2)
+            random_list = random_list.tolist()
+            '''
+            predictions = predict()
+            predictions = predictions/sum(predictions)
+            predictions =  predictions.tolist()
+            #test = input_q.get()
+            #print(random_list)
+            #column = test[:,1]
+            #print(column)
+            #socketio.emit('scan', {"text": "{}".format(random_list)})
+            socketio.emit('scan', json.dumps(predictions))
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -113,4 +141,4 @@ if __name__=="__main__":
     thread = threading.Thread(target=count_thread)
     thread.daemon = True
     thread.start()
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=False)
