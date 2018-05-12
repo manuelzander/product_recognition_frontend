@@ -114,7 +114,7 @@ def send_msg(message):
     return flask.Response(status=200)
 '''
 
-def count_thread():
+def send_to_client():
     i = 0
     while True:
         if (len(array_buffer) >= 4):
@@ -138,7 +138,7 @@ def page_not_found(e):
     return flask.render_template('404.html'), 404
 
 if __name__=="__main__":
-    thread = threading.Thread(target=count_thread)
+    thread = threading.Thread(target=send_to_client)
     thread.daemon = True
     thread.start()
     socketio.run(app, debug=False)
