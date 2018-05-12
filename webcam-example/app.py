@@ -59,8 +59,11 @@ def predict():
     #print(predictions.shape)
     #print(predictions)
     #print(np.argmax(np.sum(predictions[:,0:10],axis = 0)))
-    print(np.sum(predictions[:,0:10],axis = 0))
-    return np.sum(predictions[:,0:10],axis = 0)
+    indices = [1,4,6,9,10,13,14,15,16,17]
+    predictions = np.sum(predictions[:,indices],axis = 0)
+    predictions = predictions/sum(predictions)
+    predictions = predictions.tolist()
+    return predictions
 
 @app.route("/send_from_webcam", methods=['POST'])
 def send_to_server_webcam():
@@ -85,6 +88,12 @@ def send_to_server_webcam():
     #Append array to a circular buffer
     array_buffer.append(array)
 
+    #Placeholder for prediction function
+    '''
+    if (len(array_buffer) >= 4):
+        predictions = predict()
+        input_q.put(predictions)
+    '''
     #file.save("./snaps/" + "snap_{}.jpg".format(counter))
     return flask.make_response(json.dumps({"status": "ok"}))
 
@@ -114,23 +123,18 @@ def send_msg(message):
     return flask.Response(status=200)
 '''
 
-def send_to_client():
+def count_thread():
     i = 0
     while True:
+        time.sleep(0.2)
+        '''
+        random_list = np.round(np.random.rand(6), decimals=2)
+        random_list = random_list.tolist()
+        '''
+        #predictions = input_q.get()
         if (len(array_buffer) >= 4):
-            time.sleep(1)
-            '''
-            random_list = np.round(np.random.rand(6), decimals=2)
-            random_list = random_list.tolist()
-            '''
             predictions = predict()
-            predictions = predictions/sum(predictions)
-            predictions =  predictions.tolist()
-            #test = input_q.get()
-            #print(random_list)
-            #column = test[:,1]
-            #print(column)
-            #socketio.emit('scan', {"text": "{}".format(random_list)})
+            print(predictions)
             socketio.emit('scan', json.dumps(predictions))
 
 @app.errorhandler(404)
@@ -138,7 +142,7 @@ def page_not_found(e):
     return flask.render_template('404.html'), 404
 
 if __name__=="__main__":
-    thread = threading.Thread(target=send_to_client)
+    thread = threading.Thread(target=count_thread)
     thread.daemon = True
     thread.start()
     socketio.run(app, debug=False)
