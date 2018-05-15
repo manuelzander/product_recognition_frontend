@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -31,12 +30,6 @@
         <li class="nav-item">
           <a class="nav-link" href="#" onclick="take_snapshot_loop();">Start Predictions</a>
         </li>
-        <!--<li class="nav-item">
-          <a class="nav-link" href="#" onclick="stop_taking_snapshot();">Stop Predictions</a>
-        </li>-->
-        <!--<li class="nav-item">
-          <a class="nav-link" href="/upload">Upload</a>
-        </li>-->
       </ul>
     </div>
   </nav>
@@ -49,12 +42,6 @@
       <br>
       <h4>Image Capturing</h4>
       <div id="my_camera"></div>
-      <!--<div id="snapshot-buttons" style="margin: 0 auto; text-align: center; padding-top: 80px;" >
-          <form>
-              <input type=button value="Start Predictions" onClick="take_snapshot_loop()">
-              <input type=button value="Stop Predictions" onClick="stop_taking_snapshot()">
-          </form>
-      </div>-->
     </div>
 
     <div class="col-md-6">
@@ -88,13 +75,103 @@
       <br>
       <br>
       <br>
-      <br>
     </div>
     </div>
 
   </main><!-- /.container -->
 
-  <script>
+  <script type="text/javascript" charset="utf-8">
+
+    //Webcam set-up
+    Webcam.set({
+      width: 550,
+      height: 440,
+      image_format: 'jpeg',
+      jpeg_quality: 90,
+      constraints: {
+        width: { exact: 550 },
+        height: { exact: 440 }
+      }
+    });
+		Webcam.attach( '#my_camera' );
+
+    //SocketIO set-up and intialization of variables
+    var timer = null;
+    var data = [];
+    var max_of_array = 0;
+    var index_max_of_array = 0;
+    var class_number = 0;
+    var threshold = 0.3;
+    var counter = 0;
+    var sub_counter = 0;
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('scan', function(incoming_data) {
+      data = JSON.parse(incoming_data);
+
+      //Update the chart
+      add_data(myChart, data, 0);
+
+      //Extract most likely class (to update image and table)
+      max_of_array = Math.max.apply(Math, data);
+      index_max_of_array = data.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+      class_number = index_max_of_array + 1;
+
+      //Keep track of predictions and periodically reset table entries
+      if (max_of_array >= threshold){
+        counter = counter + 1;
+        sub_counter = sub_counter + 1;
+        if (sub_counter == 6){
+          //$("#history").empty();
+          $("#history > tbody").html("");
+          sub_counter = 0;
+        }
+
+        //Add entry to table
+        var row = $("<tr><td>" + counter + "</td><td>" + class_number + "</td><td>" + 100*max_of_array + "%</td></tr>");
+        $("#history > tbody").append(row);
+
+        //Update product image
+        change_image();
+      }
+    });
+
+    //Function to update the chart
+    function add_data(chart, data, datasetIndex) {
+       chart.data.datasets[datasetIndex].data = data;
+       chart.update();
+    }
+
+    //Function to update the product image
+    function change_image(){
+      var image = document.getElementById("product_image");
+      var image_source = "/static/" + class_number.toString() + ".jpg";
+      image.setAttribute("src", image_source);
+    }
+
+    //Webcam functions
+    function take_snapshot_loop() {
+      if (!timer) {
+        take_snapshot();
+        timer = setInterval(take_snapshot, 2000);
+      }
+    }
+
+    function stop_taking_snapshot() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    function take_snapshot() {
+          Webcam.snap(function(data_uri) {
+          Webcam.upload(data_uri, "{{ url_for('send_to_server_webcam') }}", function(code, text) {
+        });
+      });
+      }
+
     //Chart set-up
     var ctx = document.getElementById("myChart").getContext('2d');
     var myChart = new Chart(ctx, {
@@ -144,97 +221,5 @@
       }
   });
   </script>
-
-  <script type="text/javascript" charset="utf-8">
-    //Webcam set-up
-    Webcam.set({
-      width: 550,
-      height: 440,
-      image_format: 'jpeg',
-      jpeg_quality: 90,
-      constraints: {
-        width: { exact: 550 },
-        height: { exact: 440 }
-      }
-    });
-		Webcam.attach( '#my_camera' );
-
-    //SocketIO set-up and intialization of variables
-    var timer = null;
-    var data = [];
-    var max_of_array = 0;
-    var index_max_of_array = 0;
-    var class_number = 0;
-    var threshold = 0.3;
-    var counter = 0;
-    var sub_counter = 0;
-
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-    socket.on('scan', function(incoming_data) {
-      //console.log(incoming_data);
-      //$("#predictions").append($('<li>').text(msg.text));
-      data = JSON.parse(incoming_data);
-      add_data(myChart, data, 0);
-
-      max_of_array = Math.max.apply(Math, data);
-      index_max_of_array = data.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-      class_number = index_max_of_array + 1;
-
-      if (max_of_array >= threshold){
-        counter = counter + 1;
-        sub_counter = sub_counter + 1;
-        if (sub_counter == 6){
-          //$("#history").empty();
-          $("#history > tbody").html("");
-
-          sub_counter = 0;
-        }
-        //$("#history").append($('<li>').text(counter + ". Prediction: Class " + class_number + "; Accuracy: " + 100*max_of_array + "%"));
-        var row = $("<tr><td>" + counter + "</td><td>" + class_number + "</td><td>" + 100*max_of_array + "%</td></tr>");
-        $("#history > tbody").append(row);
-
-        change_image();
-      }
-    });
-
-
-    //Function to update the chart
-    function add_data(chart, data, datasetIndex) {
-       chart.data.datasets[datasetIndex].data = data;
-       chart.update();
-    }
-
-    //Function to update the product image
-    function change_image(){
-      var image = document.getElementById("product_image");
-      var image_source = "/static/" + class_number.toString() + ".jpg";
-      image.setAttribute("src", image_source);
-    }
-
-    //Webcam functions
-    function take_snapshot_loop() {
-      if (!timer) {
-        take_snapshot();
-        timer = setInterval(take_snapshot, 200);
-      }
-    }
-
-    function stop_taking_snapshot() {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-    }
-
-    function take_snapshot() {
-          Webcam.snap( function(data_uri) {
-          Webcam.upload( data_uri, "{{ url_for('send_to_server_webcam') }}", function(code, text) {
-        });
-      });
-      }
-	</script>
-
 </body>
-
 </html>

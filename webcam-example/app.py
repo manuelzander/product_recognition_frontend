@@ -13,7 +13,7 @@ import codecs
 import collections
 import numpy as np
 import keras
-from keras import backend as K
+#from keras import backend as K
 import cv2
 from PIL import Image
 
@@ -41,7 +41,7 @@ model = keras.models.load_model(model_path)
 model._make_predict_function()
 graph = tf.get_default_graph()
 
-K.set_learning_phase(0)
+#K.set_learning_phase(0)
 
 @app.route("/send_from_webcam", methods=['POST'])
 def send_to_server_webcam():
@@ -53,7 +53,9 @@ def send_to_server_webcam():
     file = flask.request.files['webcam']
     file.save("./snaps/" + "snap_{}.jpg".format(counter))
     '''
+    global time_
     #Get picture and convert into right format for prediction
+    #time_ = time.time()
     file = flask.request.files['webcam']
     string = file.read()
     base64_data = codecs.encode(string, 'base64')
@@ -66,6 +68,8 @@ def send_to_server_webcam():
 
     #Append array to a circular buffer
     array_buffer.append(array)
+    #print(time.time() - time_)
+    #time_ = time.time()
     #print("----------------------------------------------")
     #print("--------------NEW PICTURES ADDED--------------")
     #print("----------------------------------------------")
@@ -79,7 +83,7 @@ def send_msg(message):
 '''
 
 def predict():
-    global time_
+    #global time_
     while True:
         if (len(array_buffer) >= 4):
             list_of_images = []
@@ -87,10 +91,10 @@ def predict():
                 list_of_images.append(item)
 
             pictures = np.asarray(list_of_images)
-            time_ = time.time()
+            #time_ = time.time()
             with graph.as_default():
                 predictions = model.predict(pictures)#np.expand_dims(pictures[0,:,:,:],axis=0))
-            print(time.time() - time_)
+            #print(time.time() - time_)
             indices = [1,4,6,9,10,13,14,15,16,17]
             predictions = np.sum(predictions[:,indices],axis = 0)
             predictions = predictions/sum(predictions)
