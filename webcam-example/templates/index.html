@@ -8,12 +8,16 @@
   <title>OMEGAP Snapshot and Classification Page</title>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css">
 </head>
 
 <body>
-
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">OMEGAP</a>
+    <a class="navbar-brand" href="http://127.0.0.1:5000/">OMEGAP</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -21,93 +25,140 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="http://127.0.0.1:5000/">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" id="upload-nav-link" href="/upload">Upload</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-          <div class="dropdown-menu" aria-labelledby="dropdown01">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
+          <a class="nav-link" href="#" onclick="take_snapshot_loop();">Start Predictions</a>
         </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
     </div>
   </nav>
 
-  <main role="main" class="flex-container">>
+  <main role="main" class="flex-container">
+    <br>
+    <div class="modal-body row">
 
-    <div id="my_camera" style="margin: 0 auto; text-align: center; padding-top: 50px;"></div>
-    <div id="snapshot-buttons" style="margin: 0 auto; text-align: center; padding-top: 80px;" >
-        <form>
-            <input id="snapshot_btn" type=button value="Take a snapshot" onClick="take_snapshot()">
-        </form><br>
-        <form>
-            <input type=button value="Take snapshots (loop)" onClick="take_snapshot_loop()">
-            <input type=button value="Stop loop" onClick="stop_taking_snapshot()">
-        </form>
-        <div>
-          <h3>Predictions</h3>
-          <ul id="predictions">
-          </ul>
-        </div>
+    <div class="col-md-6">
+      <br>
+      <h4>Image Capturing</h4>
+      <div id="my_camera"></div>
+    </div>
 
+    <div class="col-md-6">
+    <br>
+      <h4>Predictions</h4>
+      <canvas id="myChart" width="640" height="460"></canvas>
+    </div>
+    </div>
+
+    <div class="modal-body row">
+
+    <div class="col-md-6">
+      <h4>Predicted Product</h4>
+      <div id="images" style="margin: 0 auto; text-align: center">
+      <img id="product_image" src="{{ url_for('static', filename='ocado.jpg') }}" style="height: 50%; width: 50%; object-fit: contain">
+      </div>
+    </div>
+    <div class="col-md-6">
+        <h4>Prediction History</h4>
+        <table id="history" class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Class</th>
+            <th scope="col">Accuracy</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <br>
+      <br>
+      <br>
+    </div>
     </div>
 
   </main><!-- /.container -->
 
-  <script type="text/javascript" src="{{ url_for('static', filename='webcamjs/webcam.js') }}"></script>
-
-	<script language="JavaScript">
-		Webcam.set({
-			width: 320,
-			height: 240,
-			image_format: 'jpeg',
-			jpeg_quality: 90
-		});
-		Webcam.attach( '#my_camera' );
-	</script>
-
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script type="text/javascript" charset="utf-8">
+
+    //Webcam set-up
+    Webcam.set({
+      width: 550,
+      height: 440,
+      image_format: 'jpeg',
+      jpeg_quality: 90,
+      constraints: {
+        width: { exact: 550 },
+        height: { exact: 440 }
+      }
+    });
+		Webcam.attach( '#my_camera' );
+
+    //SocketIO set-up and intialization of variables
+    var timer = null;
+    var data = [];
+    var max_of_array = 0;
+    var index_max_of_array = 0;
+    var class_number = 0;
+    var threshold = 0.3;
+    var counter = 0;
+    var sub_counter = 0;
 
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-    socket.on('scan', function(msg) {
-      console.log(msg.text);
-      $("#predictions").append($('<li>').text(msg.text));
+    socket.on('scan', function(incoming_data) {
+      data = JSON.parse(incoming_data);
+
+      //Update the chart
+      add_data(myChart, data, 0);
+
+      //Extract most likely class (to update image and table)
+      max_of_array = Math.max.apply(Math, data);
+      index_max_of_array = data.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+      class_number = index_max_of_array + 1;
+
+      //Keep track of predictions and periodically reset table entries
+      if (max_of_array >= threshold){
+        counter = counter + 1;
+        sub_counter = sub_counter + 1;
+        if (sub_counter == 6){
+          //$("#history").empty();
+          $("#history > tbody").html("");
+          sub_counter = 0;
+        }
+
+        //Add entry to table
+        var row = $("<tr><td>" + counter + "</td><td>" + class_number + "</td><td>" + 100*max_of_array + "%</td></tr>");
+        $("#history > tbody").append(row);
+
+        //Update product image
+        change_image();
+      }
     });
 
+    //Function to update the chart
+    function add_data(chart, data, datasetIndex) {
+       chart.data.datasets[datasetIndex].data = data;
+       chart.update();
+    }
 
-  </script>
+    //Function to update the product image
+    function change_image(){
+      var image = document.getElementById("product_image");
+      var image_source = "/static/" + class_number.toString() + ".jpg";
+      image.setAttribute("src", image_source);
+    }
 
-	<script language="JavaScript">
-
-    var timer = null;
-
+    //Webcam functions
     function take_snapshot_loop() {
-      //alert("Started taking pictures!");
-
       if (!timer) {
         take_snapshot();
-        timer = setInterval( take_snapshot, 250 );
+        timer = setInterval(take_snapshot, 2000);
       }
     }
 
     function stop_taking_snapshot() {
-      //alert("Stopped taking pictures!");
-
       if (timer) {
         clearTimeout(timer);
         timer = null;
@@ -115,24 +166,60 @@
     }
 
     function take_snapshot() {
-      // alert("Take Snapshot")
-      // take snapshot and get image data
-          Webcam.snap( function(data_uri) {
-              //console.log(text);
-        // display results in page
-        /*document.getElementById('results').innerHTML =
-          '<h2>Here is your image:</h2>' +
-          '<img src="'+data_uri+'"/>';*/
-          Webcam.upload( data_uri, "{{ url_for('send_to_server_webcam') }}", function(code, text) {
-          // Upload complete!
-          // 'code' will be the HTTP response code from the server, e.g. 200
-          // 'text' will be the raw response content
-              //console.log(text);
+          Webcam.snap(function(data_uri) {
+          Webcam.upload(data_uri, "{{ url_for('send_to_server_webcam') }}", function(code, text) {
         });
       });
       }
-	</script>
 
+    //Chart set-up
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"],
+          datasets: [{
+              label: 'Probability per class',
+              data: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)',
+                  'rgba(100, 100, 100, 0.2)',
+                  'rgba(88, 170, 150, 0.2)',
+                  'rgba(230, 90, 255, 0.2)',
+                  'rgba(20, 120, 44, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)',
+                  'rgba(100, 100, 100, 1)',
+                  'rgba(88, 170, 150, 1)',
+                  'rgba(230, 90, 255, 1)',
+                  'rgba(20, 120, 44, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                        max: 1,
+                        min: 0,
+                        stepSize: 0.1
+                  }
+              }]
+          }
+      }
+  });
+  </script>
 </body>
-
 </html>

@@ -1,4 +1,4 @@
-#!/homes/mmz216/group-project-front-end/webcam-example/env/bin/python2
+#!/homes/mmz216/group-project-front-end/webcam-example/env/bin/python3
 
 # -*- coding: utf-8 -*-
 import re
