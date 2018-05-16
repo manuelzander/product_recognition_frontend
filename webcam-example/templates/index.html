@@ -36,46 +36,46 @@
 
   <main role="main" class="flex-container">
     <br>
-    <div class="modal-body row">
 
-    <div class="col-md-6">
+    <div class="modal-body row">
+      <div class="col-md-6">
+        <br>
+        <h4>Image Capturing</h4>
+        <div id="my_camera"></div>
+      </div>
+
+      <div class="col-md-6">
       <br>
-      <h4>Image Capturing</h4>
-      <div id="my_camera"></div>
-    </div>
-
-    <div class="col-md-6">
-    <br>
-      <h4>Predictions</h4>
-      <canvas id="myChart" width="640" height="460"></canvas>
-    </div>
-    </div>
-
-    <div class="modal-body row">
-
-    <div class="col-md-6">
-      <h4>Predicted Product</h4>
-      <div id="images" style="margin: 0 auto; text-align: center">
-      <img id="product_image" src="{{ url_for('static', filename='ocado.jpg') }}" style="height: 50%; width: 50%; object-fit: contain">
+        <h4>Predictions</h4>
+        <canvas id="myChart" width="640" height="460"></canvas>
       </div>
     </div>
-    <div class="col-md-6">
-        <h4>Prediction History</h4>
-        <table id="history" class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Class</th>
-            <th scope="col">Accuracy</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-      <br>
-      <br>
-      <br>
-    </div>
+
+    <div class="modal-body row">
+      <div class="col-md-6">
+        <h4>Predicted Product</h4>
+        <div id="images" style="margin: 0 auto; text-align: center">
+        <img id="product_image" src="/static/images/ocado.jpg" style="height: 50%; width: 50%; object-fit: contain">
+        </div>
+      </div>
+
+      <div class="col-md-6">
+          <h4>Prediction History</h4>
+          <table id="history" class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Class</th>
+              <th scope="col">Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <br>
+        <br>
+        <br>
+      </div>
     </div>
 
   </main><!-- /.container -->
@@ -146,7 +146,7 @@
     //Function to update the product image
     function change_image(){
       var image = document.getElementById("product_image");
-      var image_source = "/static/" + class_number.toString() + ".jpg";
+      var image_source = "/static/images/" + class_number.toString() + ".jpg";
       image.setAttribute("src", image_source);
     }
 
@@ -221,5 +221,6 @@
       }
   });
   </script>
+  
 </body>
 </html>
