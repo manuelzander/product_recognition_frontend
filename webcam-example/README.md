@@ -13,10 +13,6 @@ which could not be uploaded due to size constraints on Cate.
 Project root (Contains this file)
 ------------------
 webcam_example   >
-                 env               >
-                                bin (contains script to activate Python's virtual environment)
-                 env               >
-                 -------------------
                  static            >
                                 webcam.js (files for WebcamJS library)
                                 images
