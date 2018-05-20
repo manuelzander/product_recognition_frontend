@@ -89,12 +89,12 @@
     //Webcam set-up
     Webcam.set({
       width: 500,
-      height: 400,
-      image_format: 'jpeg',
+      height: 500,
+      image_format: 'png',
       jpeg_quality: 90,
       constraints: {
         width: { exact: 500 },
-        height: { exact: 400 }
+        height: { exact: 500 }
       }
     });
 		Webcam.attach( '#my_camera' );
@@ -181,10 +181,10 @@
     var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-          labels: ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"],
+          labels: ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10", "Class 11", "Class 12", "Class 13"],
           datasets: [{
               label: 'Probability per class',
-              data: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+              data: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
               backgroundColor: [
                   'rgba(255, 99, 132, 0.2)',
                   'rgba(54, 162, 235, 0.2)',
@@ -193,6 +193,9 @@
                   'rgba(153, 102, 255, 0.2)',
                   'rgba(255, 159, 64, 0.2)',
                   'rgba(100, 100, 100, 0.2)',
+                  'rgba(88, 170, 150, 0.2)',
+                  'rgba(230, 90, 255, 0.2)',
+                  'rgba(20, 120, 44, 0.2)',
                   'rgba(88, 170, 150, 0.2)',
                   'rgba(230, 90, 255, 0.2)',
                   'rgba(20, 120, 44, 0.2)'
@@ -205,6 +208,9 @@
                   'rgba(153, 102, 255, 1)',
                   'rgba(255, 159, 64, 1)',
                   'rgba(100, 100, 100, 1)',
+                  'rgba(88, 170, 150, 1)',
+                  'rgba(230, 90, 255, 1)',
+                  'rgba(20, 120, 44, 1)',
                   'rgba(88, 170, 150, 1)',
                   'rgba(230, 90, 255, 1)',
                   'rgba(20, 120, 44, 1)'
