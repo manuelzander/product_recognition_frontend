@@ -41,13 +41,17 @@
       <div class="col-md-6">
         <br>
         <h4>Image Capturing</h4>
+        <center>
         <div id="my_camera"></div>
+        </center>
       </div>
 
       <div class="col-md-6">
       <br>
         <h4>Predictions</h4>
-        <canvas id="myChart" width="640" height="460"></canvas>
+        <center>
+        <canvas id="myChart" width="640" height="380"></canvas>
+        </center>
       </div>
     </div>
 
@@ -84,13 +88,13 @@
 
     //Webcam set-up
     Webcam.set({
-      width: 550,
-      height: 440,
+      width: 500,
+      height: 400,
       image_format: 'jpeg',
       jpeg_quality: 90,
       constraints: {
-        width: { exact: 550 },
-        height: { exact: 440 }
+        width: { exact: 500 },
+        height: { exact: 400 }
       }
     });
 		Webcam.attach( '#my_camera' );
@@ -122,7 +126,7 @@
       if (max_of_array >= threshold){
         counter = counter + 1;
         sub_counter = sub_counter + 1;
-        if (sub_counter == 6){
+        if (sub_counter == 5){
           //$("#history").empty();
           $("#history > tbody").html("");
           sub_counter = 0;
@@ -221,6 +225,6 @@
       }
   });
   </script>
-  
+
 </body>
 </html>
