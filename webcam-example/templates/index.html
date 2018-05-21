@@ -40,7 +40,7 @@
     <div class="modal-body row">
       <div class="col-md-6">
         <br>
-        <h4>Image Capturing</h4>
+        <h6>Image Capturing</h6>
         <center>
         <div id="my_camera"></div>
         </center>
@@ -48,23 +48,23 @@
 
       <div class="col-md-6">
       <br>
-        <h4>Predictions</h4>
+        <h6>Predictions</h6>
         <center>
-        <canvas id="myChart" width="640" height="380"></canvas>
+        <canvas id="myChart" width="640" height="360"></canvas>
         </center>
       </div>
     </div>
 
     <div class="modal-body row">
       <div class="col-md-6">
-        <h4>Predicted Product</h4>
+        <h6>Predicted Product</h6>
         <div id="images" style="margin: 0 auto; text-align: center">
         <img id="product_image" src="/static/images/ocado.jpg" style="height: 50%; width: 50%; object-fit: contain">
         </div>
       </div>
 
       <div class="col-md-6">
-          <h4>Prediction History</h4>
+          <h6>Prediction History</h6>
           <table id="history" class="table">
           <thead>
             <tr>
@@ -88,13 +88,13 @@
 
     //Webcam set-up
     Webcam.set({
-      width: 500,
-      height: 500,
+      width: 450,
+      height: 360,
       image_format: 'png',
       jpeg_quality: 90,
       constraints: {
-        width: { exact: 500 },
-        height: { exact: 500 }
+        width: { exact: 450 },
+        height: { exact: 360 }
       }
     });
 		Webcam.attach( '#my_camera' );
@@ -105,7 +105,7 @@
     var max_of_array = 0;
     var index_max_of_array = 0;
     var class_number = 0;
-    var threshold = 0.3;
+    var threshold = 0.55;
     var counter = 0;
     var sub_counter = 0;
 
@@ -138,6 +138,10 @@
 
         //Update product image
         change_image();
+      }else{
+        var image = document.getElementById("product_image");
+        var image_source = "/static/images/9.jpg";
+        image.setAttribute("src", image_source);
       }
     });
 
@@ -158,7 +162,7 @@
     function take_snapshot_loop() {
       if (!timer) {
         take_snapshot();
-        timer = setInterval(take_snapshot, 2000);
+        timer = setInterval(take_snapshot, 100);
       }
     }
 
@@ -181,10 +185,10 @@
     var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-          labels: ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10", "Class 11", "Class 12", "Class 13"],
+          labels: ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Null Class"],
           datasets: [{
               label: 'Probability per class',
-              data: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+              data: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
               backgroundColor: [
                   'rgba(255, 99, 132, 0.2)',
                   'rgba(54, 162, 235, 0.2)',
@@ -194,11 +198,7 @@
                   'rgba(255, 159, 64, 0.2)',
                   'rgba(100, 100, 100, 0.2)',
                   'rgba(88, 170, 150, 0.2)',
-                  'rgba(230, 90, 255, 0.2)',
-                  'rgba(20, 120, 44, 0.2)',
-                  'rgba(88, 170, 150, 0.2)',
-                  'rgba(230, 90, 255, 0.2)',
-                  'rgba(20, 120, 44, 0.2)'
+                  'rgba(230, 90, 255, 0.2)'
               ],
               borderColor: [
                   'rgba(255,99,132,1)',
@@ -209,11 +209,7 @@
                   'rgba(255, 159, 64, 1)',
                   'rgba(100, 100, 100, 1)',
                   'rgba(88, 170, 150, 1)',
-                  'rgba(230, 90, 255, 1)',
-                  'rgba(20, 120, 44, 1)',
-                  'rgba(88, 170, 150, 1)',
-                  'rgba(230, 90, 255, 1)',
-                  'rgba(20, 120, 44, 1)'
+                  'rgba(230, 90, 255, 1)'
               ],
               borderWidth: 1
           }]

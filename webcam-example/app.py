@@ -32,7 +32,7 @@ array_buffer = collections.deque(maxlen=4)
 input_q = queue.LifoQueue(maxsize=3)
 
 #Load the model
-model_path = "checkpoints/intermediate.hdf5"#"/home/peter/Documents/Imperial/Ocado/group-project-back-end/MODEL_OUTPUTS/checkpoints/intermediate.hdf5"#
+model_path = "demo_v1/intermediate.hdf5"#"/home/peter/Documents/Imperial/Ocado/group-project-back-end/MODEL_OUTPUTS/checkpoints/intermediate.hdf5"#
 model = keras.models.load_model(model_path)
 model._make_predict_function()
 graph = tf.get_default_graph()
@@ -58,30 +58,28 @@ def predict():
     while True:
         if (len(array_buffer) >= 4):
             list_of_images = []
-            for item in array_buffer:
+            for item in list(array_buffer):
                 list_of_images.append(item)
-            print(len(list_of_images))
             pictures = np.asarray(list_of_images)
-            print(pictures.shape)
+            #print(pictures.shape)
 
             with graph.as_default():
                 predictions = model.predict(pictures[:,:,:,0:3])
-                print(predictions)
-        
+                #print(predictions)
 
             #Selected products that we can purchase
-            indices = [0,1,2,3,4,5,6,7,9,10,11,12]
+            #indices = [0,1,2,3,4,5,6,7,9,10,11,12]
+            indices = [0,1,2,3,4,5,6,7,8]
             #indices = [1,4,6,9,10,13,14,15,16,17]
             predictions = np.sum(predictions[:,indices],axis = 0)
             predictions = predictions/sum(predictions)
             predictions = predictions.tolist()
-            
+
             input_q.put(predictions)
 
 #Send predictions thread
 def send_thread():
     while True:
-        time.sleep(1)
         if (len(array_buffer) >= 4):
             predictions = input_q.get()
             socketio.emit('scan', json.dumps(predictions))
